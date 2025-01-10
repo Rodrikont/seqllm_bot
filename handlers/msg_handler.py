@@ -4,13 +4,15 @@ from usecases.bot_usecase import BotUsecase
 from models.handler_bot_request import HandlerBotReq
 from models.uscase_bot_response import UscaseBotResp
 
+usecase = BotUsecase()
+
 class MsgHandler:
     def __init__(self):
         self.tg = ntelegram.telegram(config.config.tg_token)
         
     def exequte(self, message: str) -> HandlerBotReq:
         print("Send message to usecase")
-        resp = BotUsecase.execute(message)
+        resp = usecase.execute(message)
         if resp is not None:
             print("Return message from usecase:\tSucsess")
 
@@ -24,7 +26,7 @@ class MsgHandler:
 
             response = UscaseBotResp(
                 answer="error",
-                status="400",
+                status=500,
                 error="No answer from usecase"
             )
 
