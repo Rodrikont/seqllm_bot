@@ -23,7 +23,7 @@ class EqSolverClient:
 
             print("Send message to server")
 
-            resp = requests.post("http://0.0.0.0:8080/equation/", json=data)
+            resp = requests.post(config.client_url + config.equation_endp, json=data)
 
             if resp.status_code == 200:
                 try:
