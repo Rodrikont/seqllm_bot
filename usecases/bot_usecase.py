@@ -4,8 +4,6 @@ from models.usecase_bot_request import UsecaseBotReq
 from models.uscase_bot_response import UscaseBotResp
 from models.client_bot_request import ClientBotReq
 
-client = EqSolverClient()
-
 class BotUsecase:
     def __init__(self):
         self.config = config
@@ -29,9 +27,11 @@ class BotUsecase:
                 error="No answer from client"
                 )
         
+        print(response)
         return response
 
     def msg_to_client(self, message: str) -> ClientBotReq:
         print("Send message to client")
-        a = client.request(message)
+        a = EqSolverClient.request(message)
+        print(a)
         return a

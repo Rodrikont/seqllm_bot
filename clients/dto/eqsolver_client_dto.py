@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
 
-class EqServerBotReq(BaseModel):
-    question: str
+class EqServerBotRespDTO(BaseModel):
+    message: str
     status: Optional[int] = 200

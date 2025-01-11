@@ -33,9 +33,14 @@ class Server:
                 print(msg2)
                 # debug
                 # print(answ.error)
-                answ = handler.exequte(msg)
-                if answ.answer is not None:
+                answ = handler.exequte(msg2)
+                print(answ)
+                an = answ.answer
+                print(an)
+                if answ.answer != None and "error" not in str(an).lower():
                     self.tg.send("Вот ответ на ваше уравнение:\n\n" + answ.answer + "\n\nСпасибо, что используете нашего бота!")
+                elif answ.answer == "":
+                    self.tg.send("Похоже, уравнение не имеет решения")
                 else:
                     self.tg.send("Похоже, возникла ошибка. В скором времени она будет исправлена")
             time.sleep(1)

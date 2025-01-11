@@ -30,5 +30,6 @@ class MsgHandler:
                 error="No answer from usecase"
             )
 
+        print(response)
         return response
 
