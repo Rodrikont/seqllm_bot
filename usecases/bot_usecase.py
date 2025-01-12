@@ -5,9 +5,6 @@ from models.uscase_bot_response import UscaseBotResp
 from models.client_bot_request import ClientBotReq
 
 class BotUsecase:
-    def __init__(self):
-        self.config = config
-
     def execute(self, message: str) -> UsecaseBotReq:
         resp = self.msg_to_client(message)
 

@@ -7,7 +7,7 @@ handler = MsgHandler()
 
 class Server:
     def __init__(self):
-        self.tg = ntelegram.telegram(config.tg_token)
+        self.tg = ntelegram.telegram(config.telegram.token)
     
     def serve(self):
         print("Bot is running...")
@@ -31,18 +31,22 @@ class Server:
                 msg2 = msg1.get('text')
                 # debug
                 print(msg2)
-                # debug
-                # print(answ.error)
-                answ = handler.exequte(msg2)
-                print(answ)
-                an = answ.answer
-                print(an)
-                if answ.answer != None:
-                    self.tg.send("Вот ответ на ваше уравнение:\n\n" + answ.answer + "\n\nСпасибо, что используете нашего бота!")
-                elif answ.answer == "":
-                    self.tg.send("Похоже, уравнение не имеет решения")
-                elif "error" in str(an).lower():
-                    self.tg.send("Воникла ошибка при решении")
+
+                if msg2 != "/start":
+                    # debug
+                    # print(answ.error)
+                    answ = handler.exequte(msg2)
+                    print(answ)
+                    an = answ.answer
+                    print(an)
+                    if an != None and "error" not in str(an).lower():
+                        self.tg.send("Вот ответ на ваше уравнение:\n\n" + an + "\n\nСпасибо, что используете нашего бота!")
+                    elif answ.answer == "":
+                        self.tg.send("Похоже, уравнение не имеет решения")
+                    elif "error" in str(an).lower():
+                        self.tg.send("Воникла ошибка при решении")
+                    else:
+                        self.tg.send("Похоже, возникла ошибка. В скором времени она будет исправлена")
                 else:
-                    self.tg.send("Похоже, возникла ошибка. В скором времени она будет исправлена")
+                    self.tg.send("Hello")
             time.sleep(1)

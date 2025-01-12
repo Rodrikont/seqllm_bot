@@ -8,7 +8,7 @@ usecase = BotUsecase()
 
 class MsgHandler:
     def __init__(self):
-        self.tg = ntelegram.telegram(config.config.tg_token)
+        self.tg = ntelegram.telegram(config.config.telegram.token)
         
     def exequte(self, message: str) -> HandlerBotReq:
         print("Send message to usecase")
