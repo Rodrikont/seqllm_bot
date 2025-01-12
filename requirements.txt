@@ -1,3 +1,5 @@
 requests
 environs
 pydantic
+python-telegram-bot
+gradio-client

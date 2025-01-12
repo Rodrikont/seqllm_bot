@@ -1,4 +1,3 @@
-from libraryes import ntelegram
 from config import config
 from usecases.bot_usecase import BotUsecase
 from models.handler_bot_request import HandlerBotReq
@@ -6,10 +5,7 @@ from models.uscase_bot_response import UscaseBotResp
 
 usecase = BotUsecase()
 
-class MsgHandler:
-    def __init__(self):
-        self.tg = ntelegram.telegram(config.config.telegram.token)
-        
+class MsgHandler:        
     def exequte(self, message: str) -> HandlerBotReq:
         print("Send message to usecase")
         resp = usecase.execute(message)

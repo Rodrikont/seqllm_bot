@@ -1,52 +1,67 @@
 import time, json
 from config.config import config
-from libraryes import ntelegram
 from handlers.msg_handler import MsgHandler
+from clients.qwen.qwen_client import QwenClient as q
+from telegram import Update
+from telegram.ext import Application, CommandHandler, MessageHandler, filters, CallbackContext
 
 handler = MsgHandler()
 
+user_data = {}
+
 class Server:
-    def __init__(self):
-        self.tg = ntelegram.telegram(config.telegram.token)
-    
-    def serve(self):
-        print("Bot is running...")
+    # Функция обработки команд /start и /help
+    async def start(self, update: Update, context: CallbackContext) -> None:
+        update.message.reply_text('Привет! Отправь мне любое сообщение, и я отвечу тебе!')
 
-        while True:
-            updates = self.tg.getUpdates(self.tg.cntUpd)
-            # debug
-            # print(self.tg.cntUpd)
-            # debug
-            # print(updates)
+    # Функция обработки текстовых сообщений
+    async def send_message(self, update: Update, context: CallbackContext) -> None:
+        # Отправляем обратно то же сообщение, что получил бот
+        update.message.reply_text(f'Ты сказал: {update.message.text}')
 
-            if self.tg.cntUpd > self.tg.cntUpd_last:
-                # debug
-                #print(self.tg.cntUpd)
-                msg = updates.get('result')[-1]
-                # debug
-                print(msg)
-                msg1 = msg.get('message')
-                # debug
-                print(msg1)
-                msg2 = msg1.get('text')
-                # debug
-                print(msg2)
+    async def handle_message(self, update: Update, context: CallbackContext) -> None:
+        """Обработка текстовых сообщений."""
+        user_id = update.effective_user.id
+        message = update.message.text
 
-                if msg2 != "/start":
-                    # debug
-                    # print(answ.error)
-                    answ = handler.exequte(msg2)
-                    print(answ)
-                    an = answ.answer
-                    print(an)
-                    if an != None and "error" not in str(an).lower():
-                        self.tg.send("Вот ответ на ваше уравнение:\n\n" + an + "\n\nСпасибо, что используете нашего бота!")
-                    elif answ.answer == "":
-                        self.tg.send("Похоже, уравнение не имеет решения")
-                    elif "error" in str(an).lower():
-                        self.tg.send("Воникла ошибка при решении")
-                    else:
-                        self.tg.send("Похоже, возникла ошибка. В скором времени она будет исправлена")
-                else:
-                    self.tg.send("Hello")
-            time.sleep(1)
+        if user_id not in user_data:
+            user_data[user_id] = {"state": "start"}
+
+        state = user_data[user_id]["state"]
+
+        # Логика обработки сообщений
+        if state == "start":
+            if "привет" in message.lower():
+                user_data[user_id]["state"] = "greeting"
+                await update.message.reply_text("Привет! Чем могу помочь?")
+            elif q.ask_question(data=message):
+                user_data[user_id]["state"] = "equation"
+            else:
+                await update.message.reply_text("Напиши мне линейное, квадратное или рациоальное уравнение.")
+        elif state == "greeting":
+            if q.ask_question(data=message):
+                user_data[user_id]["state"] = "equation"
+            else:
+                await update.message.reply_text("Рад снова Вас видеть!")
+        elif state == "equation":
+            await update.message.reply_text("Обрабатываю...")
+            answer = handler.exequte(message)
+            await update.message.reply_text(answer)
+        else:
+            await update.message.reply_text("Не понял Вас. Попробуйте переформулировать свой вопрос.")
+
+    # Функция обработки ошибок
+    async def error(self, update: Update, context: CallbackContext) -> None:
+        print(f'Ошибка: {context.error}')
+
+    async def run(self):
+         # Создаем объект Application
+        application = Application.builder().token(config.telegram.token).build()
+
+        # Регистрируем обработчики команд и сообщений
+        application.add_handler(CommandHandler("start", self.start))
+        application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, self.handle_message))
+
+        # Запускаем бота
+        await application.run_polling()
+        
