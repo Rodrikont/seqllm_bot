@@ -8,7 +8,7 @@ class QwenClient:
     def ask_question(self, data):
         try:
             result = client.predict(
-                query=data,
+                query=data + "\nЭто уравнение? Не решай. Ответь 'Да' или 'Нет'",
                 history=[],
                 system="You are Qwen, created by Alibaba Cloud. You are a helpful assistant.",
                 api_name="/model_chat"
@@ -25,7 +25,7 @@ class QwenClient:
 
             # resp = QwenResponseDto(**result)
 
-            print(f"{result[-2][0][-1]} - {data.question}") # log
+            print(f"{data} - {result[-2][0][-1]}") # log
 
             resp = result[-2][0][-1]
         except Exception as e:

@@ -3,3 +3,4 @@ environs
 pydantic
 python-telegram-bot
 gradio-client
+asyncio
