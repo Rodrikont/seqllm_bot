@@ -33,12 +33,22 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         await update.message.reply_text("Рад снова Вас видеть!")
     else:
         await update.message.reply_text("Обрабатываю...")
-        answer = handler.exequte(message)
-        if "error" not in answer.answer or "Error" not in answer.answer:
-            await update.message.reply_text(answer.answer)
-        else:
-            await update.message.reply_text("Не понял Вас. Попробуйте переформулировать свой вопрос.")
-            await update.message.reply_text("Напишите мне линейное, квадратное или рациональное уравнение.")
+        try:
+            answer = handler.exequte(message)
+            if "error" not in answer.answer[0] and "Error" not in answer.answer[0]:
+                if None in answer.answer:
+                    answer.answer.remove(None)
+                if len(answer.answer) == 1:
+                    await update.message.reply_text(answer.answer[0])
+                else:
+                    await update.message.reply_text(answer.answer[0])
+                    await update.message.reply_text(answer.answer[1])
+            else:
+                await update.message.reply_text("Не понял Вас. Возможно, в уравнении есть ошибка. Попробуйте переформулировать свой вопрос.")
+                await update.message.reply_text("Напишите мне линейное, квадратное или рациональное уравнение. Переменные должны быть записаны латинскими буквами.")
+        except Exception as e:
+            print(e)
+            await update.message.reply_text("Произошла ошибка на сервере")
 
 # Основная функция для запуска бота
 def main():

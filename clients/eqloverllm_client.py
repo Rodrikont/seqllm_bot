@@ -26,9 +26,11 @@ class EqSolverClient:
             resp = requests.post(config.client_solver.url() + "/" + config.client_solver.endp_eq, json=data)
 
             if resp.status_code == 200:
+                print(resp)
                 try:
                     resp.raise_for_status()
                     respo = resp.json()
+                    print(respo)
                     respDto = EqServerBotRespDTO.parse_obj(respo)
                 except ValueError as e:                    
                     print(f"Ошибка разбора JSON: {e}")

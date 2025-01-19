@@ -39,7 +39,7 @@ img-rebuild: ## Удаление и генерация образа docker ко�
 	docker rmi -f $(APP_IMG_NAME)
 	docker build -t $(APP_IMG_NAME) .
 
-img-build-push: img-build img-push-local ## Сборка images, обновление в репозитарии и очистка
+img-rebuild-push: img-rebuild img-push-local ## Сборка images, обновление в репозитарии и очистка
 #	docker rmi $$(docker images --filter "reference=${APP_IMG}" -q)
 	docker rmi $(APP_IMG_NAME)
 

@@ -1,2 +1,6 @@
-myenv
+bot_env
 __pycache__
+
+secrets
+
+.env

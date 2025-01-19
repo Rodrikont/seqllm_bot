@@ -14,7 +14,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Удаляем файл .env
-RUN rm -f .env
+RUN rm -f .env \
+rm -rf /bot_env
 
 #EXPOSE 8080
 

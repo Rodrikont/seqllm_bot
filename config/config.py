@@ -31,10 +31,14 @@ class Config:
         env.read_env()
 
         self.telegram = Telegram(env)
+        self.telegram.init_token()
+        
         self.client_solver = ClientSolver(env)
 
         self.app_name = env.str("APP_NAME", "SEqBot")
-        self.app_version = env.str("APP_VERSION", "v0.1.1")
+        self.app_version = env.str("APP_VERSION", "v0.2")
         self.debug = env.bool("APP_DEBUG", False)
         
 config = Config()
+
+print(config.client_solver.url())
