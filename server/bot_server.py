@@ -8,7 +8,7 @@ user_data = {}
 
 # Обработчик команды /start
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_text("Привет! Я твой бот. Отправь мне любое сообщение, и я отвечу.")
+    await update.message.reply_text("Привет! Я могу решить уравненние.\nКакое уравнение тебе решить?")
 
 # Обработчик текстовых сообщений
 async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
