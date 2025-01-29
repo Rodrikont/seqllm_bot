@@ -43,6 +43,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 else:
                     await update.message.reply_text(answer.answer[0])
                     await update.message.reply_text(answer.answer[1])
+
             else:
                 await update.message.reply_text("Не понял Вас. Возможно, в уравнении есть ошибка. Попробуйте переформулировать свой вопрос.")
                 await update.message.reply_text("Напишите мне линейное, квадратное или рациональное уравнение. Переменные должны быть записаны латинскими буквами.")
