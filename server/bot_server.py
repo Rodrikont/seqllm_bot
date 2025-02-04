@@ -40,7 +40,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                     answer.answer.remove(None)
                 if len(answer.answer) == 1:
                     await update.message.reply_text(answer.answer[0])
-                else:
+                elif len(answer.answer) == 2:
                     await update.message.reply_text(answer.answer[0])
                     await update.message.reply_text(answer.answer[1])
 
