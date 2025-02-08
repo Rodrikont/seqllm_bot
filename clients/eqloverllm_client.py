@@ -1,29 +1,30 @@
-from models.eqserver_bot_request import EqServerBotReq
-from clients.dto.eqsolver_client_dto import EqServerBotRespDTO
-from models.client_bot_request2 import ClientBotReq
-from models.client_bot_response import ClientBotResp
+from clients.dto.eqsolver_client_response_dto import EqClientResponseDto
+from clients.dto.eqsolver_client_request_dto import EqClientRequestDto
+from models.client_solver_response import ClientSolverResponse
 from config.config import config
+from enums.status_enums import Status
 import requests
 
 class EqSolverClient:
-    def request(message: str) -> ClientBotReq:
+    def solve(message: str) -> ClientSolverResponse:
         try:
             print(message)
 
-            json = EqServerBotReq(
-                question=message,
-                status=200
-            )
-            
-            print(json)
-
-            data = json.dict()
-
-            print(data)
-
             print("Send message to server")
 
-            resp = requests.post(config.client_solver.url() + "/" + config.client_solver.endp_eq, json=data)
+            response = None
+
+            req = EqClientRequestDto(
+                question=message
+            )
+
+            req_json = req.dict()
+            path = "{}/{}".format(config.client_solver.url(), config.client_solver.endp_eq)
+
+            resp = requests.post(
+                url=path, 
+                json=req_json,
+            )
 
             if resp.status_code == 200:
                 print(resp)
@@ -31,45 +32,50 @@ class EqSolverClient:
                     resp.raise_for_status()
                     respo = resp.json()
                     print(respo)
-                    respDto = EqServerBotRespDTO.parse_obj(respo)
+                    respDto = EqClientResponseDto.parse_obj(respo)
                 except ValueError as e:                    
                     print(f"Ошибка разбора JSON: {e}")
                 except Exception as e:
                     print(e)
-                    return ClientBotResp(error=f"Ошибка преобразования ответа: {e}")
+                    return ClientSolverResponse(
+                        status=Status.ERROR.value,
+                        error=f"Ошибка преобразования ответа: {e}",
+                        )
             else:
                 print(f"Ошибка запроса: {resp.status_code}")
-                return ClientBotResp(error=f"Ошибка запроса: {resp.status_code}")
+                return ClientSolverResponse(
+                        status=Status.ERROR_CLIENT.value,
+                        error=f"Ошибка запроса: {resp.status_code}",
+                        )
 
             if respDto != None:
-                answ = respDto.message
-                response = ClientBotResp(
-                    answer=answ,
-                    status=200
-                )
+                    response = ClientSolverResponse(
+                        status=respDto.data.status,
+                        roots=respDto.data.roots,
+                        aproxRoots=respDto.data.aproxRoots,
+                        answer=respDto.data.answer,
+                        error=respDto.data.error,
+                    )
             else:
                 print("Empty answer")
-                response = ClientBotResp(
-                    answer="error",
-                    status=500,
-                    error="Empty answer"
+                response = ClientSolverResponse(
+                    status=Status.ERROR.value,
+                    error="Empty answer",
                 )
 
         except requests.exceptions.RequestException as e:
             print(f"Can't connect to server\n\n{e}\n")
 
-            response = ClientBotResp(
-                answer="error",
-                status=404,
-                error="Server now isn't avaliable"
+            response = ClientSolverResponse(
+                status=Status.ERROR_CLIENT_CONNECT.value,
+                error="Server now isn't avaliable",
             )
 
         except ValueError as e:
             print("Can't read answer")
-            response = ClientBotResp(
-                answer="error",
-                status=500,
-                error="Can't read answer"
+            response = ClientSolverResponse(
+                status=Status.ERROR.value,
+                error="Can't read answer",
             )
 
         print(response)

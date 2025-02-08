@@ -1,5 +1,4 @@
 from config.config import config
-from handlers.msg_handler import MsgHandler
 # from server.bot_server import Server
 from server import bot_server
 import asyncio

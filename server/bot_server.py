@@ -1,9 +1,10 @@
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
-from handlers.msg_handler import MsgHandler
+from usecases.solver_usecase import SolverUsecase
+from enums.status_enums import Status
 from config.config import config
 
-handler = MsgHandler()
+uscase = SolverUsecase()
 user_data = {}
 
 # Обработчик команды /start
@@ -34,20 +35,29 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     else:
         await update.message.reply_text("Обрабатываю...")
         try:
-            answer = handler.exequte(message)
-            answ1 = str(answer.answer[0])
-            if "error" not in answ1.lower():
-                if None in answer.answer:
-                    list(answer.answer).remove(None)
-                if len(answer.answer) == 1:
-                    await update.message.reply_text(answer.answer[0])
-                elif len(answer.answer) == 2:
-                    await update.message.reply_text(answer.answer[0])
-                    await update.message.reply_text(answer.answer[1])
+            resp = uscase.solve(message)
+            if resp.status == Status.CALCULATED.value:
+                answer = "Ответ:\n"
+                for root in resp.roots:
+                    answer += root + "\n"
+                await update.message.reply_text(answer)
 
-            else:
+            elif resp.status == Status.CALCULATED_APPROX.value:
+                answer = "Ответ:\n"
+                for root in resp.aproxRoots:
+                    answer += root + "\n"
+                await update.message.reply_text(answer)
+            
+            elif resp.status == Status.NEGATIVE_DISCRIMINANT.value:
+                await update.message.reply_text("Отрицательный дскриминант. Нет действительных корней.")
+
+            elif resp.status in (Status.ERROR.value, Status.NONE.value):
                 await update.message.reply_text("Не понял Вас. Возможно, в уравнении есть ошибка. Попробуйте переформулировать свой вопрос.")
                 await update.message.reply_text("Напишите мне линейное, квадратное или рациональное уравнение. Переменные должны быть записаны латинскими буквами.")
+
+            elif resp.status in (Status.ERROR_CLIENT.value, Status.ERROR_CLIENT.value):
+                await update.message.reply_text("Ошибка на сервере. Попробуйте позже.")
+
         except Exception as e:
             print(e)
             await update.message.reply_text("Произошла ошибка на сервере")
