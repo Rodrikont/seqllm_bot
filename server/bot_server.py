@@ -50,6 +50,10 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             
             elif resp.status == Status.NEGATIVE_DISCRIMINANT.value:
                 await update.message.reply_text("Отрицательный дскриминант. Нет действительных корней.")
+                answer = "Ответ с комплексными числами:\n"
+                for root in resp.roots:
+                    answer += root + "\n"
+                await update.message.reply_text(answer)
 
             elif resp.status in (Status.ERROR.value, Status.NONE.value):
                 await update.message.reply_text("Не понял Вас. Возможно, в уравнении есть ошибка. Попробуйте переформулировать свой вопрос.")
