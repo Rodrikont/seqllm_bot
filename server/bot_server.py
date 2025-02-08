@@ -36,18 +36,19 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         await update.message.reply_text("Обрабатываю...")
         try:
             resp = uscase.solve(message)
-            if resp.status == Status.CALCULATED.value:
+            if resp.status in (Status.CALCULATED.value, Status.CALCULATED_MORE_ROOTS.value):
                 answer = "Ответ:\n"
-                for root in resp.roots:
+                if resp.status == Status.CALCULATED_MORE_ROOTS.value:
+                    answer = "Найдено больше корней:\n"
+
+                roots = resp.roots
+                if len(resp.aproxRoots) > 0:
+                    roots = resp.aproxRoots
+                    
+                for root in roots:
                     answer += root + "\n"
                 await update.message.reply_text(answer)
 
-            elif resp.status == Status.CALCULATED_APPROX.value:
-                answer = "Ответ:\n"
-                for root in resp.aproxRoots:
-                    answer += root + "\n"
-                await update.message.reply_text(answer)
-            
             elif resp.status == Status.NEGATIVE_DISCRIMINANT.value:
                 await update.message.reply_text("Отрицательный дскриминант. Нет действительных корней.")
                 answer = "Ответ с комплексными числами:\n"
