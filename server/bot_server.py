@@ -35,9 +35,10 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         await update.message.reply_text("Обрабатываю...")
         try:
             answer = handler.exequte(message)
-            if "error" not in answer.answer[0] and "Error" not in answer.answer[0]:
+            answ1 = str(answer.answer[0])
+            if "error" not in answ1.lower():
                 if None in answer.answer:
-                    answer.answer.remove(None)
+                    list(answer.answer).remove(None)
                 if len(answer.answer) == 1:
                     await update.message.reply_text(answer.answer[0])
                 elif len(answer.answer) == 2:
