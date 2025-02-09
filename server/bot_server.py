@@ -69,7 +69,6 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 
 # Основная функция для запуска бота
 def main():
-    # Замените 'YOUR_TOKEN' на токен вашего бота, который вы получили от @BotFather
     token = config.telegram.token
 
     # Создаем приложение
