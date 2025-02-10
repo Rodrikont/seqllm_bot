@@ -36,9 +36,16 @@ class Config:
         self.client_solver = ClientSolver(env)
 
         self.app_name = env.str("APP_NAME", "SEqBot")
-        self.app_version = env.str("APP_VERSION", "v0.2")
+        self.app_version = env.str("APP_VERSION", self.get_version())
         self.debug = env.bool("APP_DEBUG", False)
-        
+    def get_version(self):
+        version_file = "VERSION"
+        if os.path.exists(version_file):
+            with open(version_file, "r") as f:
+                return f.read().strip()
+        return "v0.1.0"  # Значение по умолчанию, если файла нет
+
+
 config = Config()
 
 print(config.client_solver.url())
