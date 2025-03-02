@@ -35,7 +35,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     else:
         await update.message.reply_text("Обрабатываю...")
         try:
-            resp = uscase.solve(message)
+            resp = await uscase.solve(message)
             if resp.status in (Status.CALCULATED.value, Status.CALCULATED_MORE_ROOTS.value):
                 answer = "Ответ:\n"
                 if resp.status == Status.CALCULATED_MORE_ROOTS.value:

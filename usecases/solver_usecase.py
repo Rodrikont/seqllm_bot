@@ -4,7 +4,7 @@ from models.uscase_solver_response import UscaseSolverResponse
 from enums.status_enums import Status
 
 class SolverUsecase:
-    def solve(self, message):
+    async def solve(self, message):
         resp = EqSolverClient.solve(message)
 
         if resp is not None:
